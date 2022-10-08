@@ -1,0 +1,96 @@
+.sidebar {
+  border-right: 1px solid rgb(var(--border-color));
+  overflow-y: auto;
+
+  .container {
+    display: flex;
+    flex-direction: column;
+
+    margin: var(--margin-size);
+    margin-right: 0;
+    overflow-y: auto;
+  }
+
+  .media-container {
+    gap: var(--gap-size);
+    padding: var(--gap-size);
+    padding-right: 1.3rem;
+  }
+
+  ul {
+    max-height: 200px;
+    margin: 0;
+    padding-left: var(--gap-size);
+    list-style-type: none;
+    overflow-y: auto;
+  }
+  
+  li {
+    padding: var(--gap-size);
+    padding-right: 0;
+  }
+
+  .media-container:not(.not-hoverable):hover,
+  .projects li:hover,
+  .add:hover,
+  .selected {
+    background-color: rgb(var(--hover-bg-color));
+  }
+
+  .media-container,
+  .add,
+  .projects li {
+    cursor: pointer;
+  }
+
+  .not-hoverable {
+    cursor: auto;
+    margin-top: calc(var(--margin-size) / 2);
+  }
+
+  .add {
+    padding: var(--gap-size);
+  }
+
+  .text {
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+
+    // for proper centering
+    padding-bottom: 5px;
+  }
+}
+
+.all-icon {
+  color: rgb(63, 135, 252);
+}
+
+.today-icon {
+  color: rgb(55, 165, 60);
+}
+
+.week-icon {
+  color: rgb(185, 79, 204);
+}
+
+.archive-icon {
+  color: rgb(96, 125, 139);
+}
+
+.counter {
+  padding: 0 var(--gap-size);
+  color: rgb(var(--main-color));
+  font-weight: bold;
+}
+
+.color {
+  flex: 0 0 auto;
+  width: var(--gap-size);
+  height: var(--gap-size);
+  border-radius: 50%;
+
+  // test
+  // background-color: blue;
+}
