@@ -1,0 +1,27 @@
+header {
+  color: white;
+  background-color: rgb(var(--main-color));
+
+  .media-container {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    margin: 0 min(4vw, 2rem);
+  }
+
+  h1 {
+    margin: 0;
+    font-size: clamp(1.7rem, 6vw, 2.6rem);
+    letter-spacing: 3px;
+  }
+}
+
+.logo-icon {
+  font-size: clamp(3rem, 10vw, 5rem);
+}
+
+.menu-icon {
+  font-size: 2.2rem;
+  cursor: pointer;
+}
