@@ -1,6 +1,12 @@
 .sidebar {
-  border-right: 1px solid rgb(var(--border-color));
+  position: absolute;
+  right: -270px;
+  top: 0;
+  bottom: 0;
+  
   overflow-y: auto;
+  border-right: 1px solid rgb(var(--border-color));
+  background-color: white;
 
   .container {
     display: flex;
@@ -93,4 +99,18 @@
 
   // test
   // background-color: blue;
+}
+
+.showSidebar {
+  // TODO: change later
+  translate: -270px 0;
+}
+
+@media screen and (min-width: 768px) {
+  .sidebar {
+    position: static;
+    translate: 0 0;
+    border-left: none;
+    border-right: 1px solid rgb(var(--border-color));
+  }
 }
