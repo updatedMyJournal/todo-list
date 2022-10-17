@@ -1,7 +1,13 @@
 :root {
   --main-color: 255, 119, 26;
-  --border-color: 211, 200, 200;
+  --second-color: 242, 242, 242;
   --hover-bg-color: 237, 236, 236;
+  --border-color: 211, 200, 200;
+  --no-priority-color: 158, 158, 158;
+  --low-priority-color: 83, 218, 89;
+  --medium-priority-color: 255, 235, 59;
+  --high-priority-color: 255, 40, 24;
+
   --margin-size: min(4vw, 1.3rem);
   --gap-size: 0.6rem;
 }
@@ -63,6 +69,15 @@ main {
 .hidden {
   visibility: hidden;
 }
+
+.material-symbols-outlined {
+  font-size: 1.6rem;
+}
+
+// TODO: apply to all clickable elements
+// .clickable-elem {
+//   cursor: pointer;
+// }
 
 @media screen and (min-width: 768px) {
   .page-container {
