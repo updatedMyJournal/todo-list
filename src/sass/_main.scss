@@ -3,7 +3,6 @@ main {
 
   .icon {
     padding: calc(var(--gap-size) / 2);
-    cursor: pointer;
   }
 
   input[type="checkbox"] {
@@ -15,12 +14,13 @@ main {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  // TODO: change later
   gap: 30px;
 
   position: sticky;
   top: 0;
   padding: 0.4em;
-  border-left: clamp(15px, 3vw, 30px) solid rgb(63, 135, 252);
+  border-left: clamp(15px, 3vw, 30px) solid rgb(var(--all-icon-color));
   background-color: white;
 
   h2 {
@@ -46,13 +46,11 @@ main {
     font-size: inherit;
     font-weight: 700;
     color: rgb(var(--main-color));
-    cursor: pointer;
   }
 
   .sort {
     font-size: inherit;
-    color: #607d8b;
-    cursor: pointer;
+    color: rgb(96, 125, 139);
   }
 }
 
@@ -63,7 +61,7 @@ main {
 
   margin: 0.6em 1.4em;
   padding: 0.4em;
-  border-left: 7px solid rgb(var(--no-priority-color));
+  border-left: 7px solid rgb(var(--default-color));
   border-radius: 2px;
   background-color: rgb(var(--second-color));
   

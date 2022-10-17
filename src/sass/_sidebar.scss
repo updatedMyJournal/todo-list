@@ -3,10 +3,11 @@
   right: -270px;
   top: 0;
   bottom: 0;
-  
+
   overflow-y: auto;
-  border-right: 1px solid rgb(var(--border-color));
-  background-color: white;
+  border-left: 1px solid rgb(var(--border-color));
+  background-color: rgb(var(--second-color));
+  z-index: 1;
 
   .container {
     display: flex;
@@ -36,21 +37,11 @@
     padding-right: 0;
   }
 
-  .media-container:not(.not-hoverable):hover,
-  .projects li:hover,
-  .add:hover,
-  .selected {
+  .clickable-elem:hover {
     background-color: rgb(var(--hover-bg-color));
   }
 
-  .media-container,
-  .add,
-  .projects li {
-    cursor: pointer;
-  }
-
-  .not-hoverable {
-    cursor: auto;
+  .extra-margin-top {
     margin-top: calc(var(--margin-size) / 2);
   }
 
@@ -70,19 +61,19 @@
 }
 
 .all-icon {
-  color: rgb(63, 135, 252);
+  color: rgb(var(--all-icon-color));
 }
 
 .today-icon {
-  color: rgb(55, 165, 60);
+  color: rgb(var(--today-icon-color));
 }
 
 .week-icon {
-  color: rgb(185, 79, 204);
+  color: rgb(var(--week-icon-color));
 }
 
 .archive-icon {
-  color: rgb(96, 125, 139);
+  color: rgb(var(--archive-icon-color));
 }
 
 .counter {
@@ -96,9 +87,7 @@
   width: var(--gap-size);
   height: var(--gap-size);
   border-radius: 50%;
-
-  // test
-  // background-color: blue;
+  background-color: rgb(var(--default-color));
 }
 
 .showSidebar {
