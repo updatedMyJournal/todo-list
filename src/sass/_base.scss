@@ -116,6 +116,11 @@ main {
   background-color: rgb(226, 226, 226);
 }
 
+::selection {
+  background-color: rgb(var(--main-color));
+  color: white;
+}
+
 @supports (scrollbar-color: auto) {
   html {
     scrollbar-color: rgb(255, 194, 103) rgb(226, 226, 226);
