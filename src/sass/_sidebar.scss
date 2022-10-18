@@ -30,6 +30,7 @@
     padding-left: var(--gap-size);
     list-style-type: none;
     overflow-y: auto;
+    scrollbar-gutter: stable;
   }
   
   li {

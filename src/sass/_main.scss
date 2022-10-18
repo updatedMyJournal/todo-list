@@ -56,7 +56,7 @@
 
 .todo-container {
   overflow-y: auto;
-  // scrollbar-gutter: stable;
+  scrollbar-gutter: stable both-edges;
 }
 
 .todo {
