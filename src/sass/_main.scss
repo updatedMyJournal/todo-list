@@ -82,11 +82,11 @@ $half-gap-size: calc(var(--gap-size) / 2);
     background-color: rgb(var(--hover-bg-color));
   }
 
-  // .edit {
-  //   color: rgb(96, 125, 139);
-  //   font-variation-settings: 'FILL' 1;
-  // }
-  // 
+  .edit {
+    color: rgb(96, 125, 139);
+    font-variation-settings: 'FILL' 1;
+  }
+
   .add {
     font-size: inherit;
     font-weight: 700;
