@@ -1,9 +1,12 @@
+$negative-sidebar-width: calc(var(--sidebar-width) * -1);
+
 .sidebar {
   position: absolute;
-  right: -270px;
+  right: $negative-sidebar-width;
   top: 0;
   bottom: 0;
 
+  visibility: hidden;
   overflow-y: auto;
   border-left: 1px solid rgb(var(--border-color));
   background-color: rgb(var(--second-color));
@@ -21,11 +24,11 @@
   .media-container {
     gap: var(--gap-size);
     padding: var(--gap-size);
-    padding-right: 1.3rem;
+    padding-right: 1rem;
   }
 
   ul {
-    max-height: 200px;
+    max-height: 12rem;
     margin: 0;
     padding-left: var(--gap-size);
     list-style-type: none;
@@ -85,20 +88,21 @@
 
 .color {
   flex: 0 0 auto;
-  width: var(--gap-size);
-  height: var(--gap-size);
+  width: 0.6em;
+  height: 0.6em;
   border-radius: 50%;
   background-color: rgb(var(--default-color));
 }
 
 .showSidebar {
-  // TODO: change later
-  translate: -270px 0;
+  translate: $negative-sidebar-width 0;
+  visibility: visible;
 }
 
-@media screen and (min-width: 768px) {
+@media screen and (min-width: 48rem) {
   .sidebar {
     position: static;
+    visibility: visible;
     translate: 0 0;
     border-left: none;
     border-right: 1px solid rgb(var(--border-color));

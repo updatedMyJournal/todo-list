@@ -14,6 +14,7 @@ header {
     margin: 0;
     font-size: clamp(1.7rem, 6vw, 2.6rem);
     letter-spacing: 3px;
+    white-space: nowrap;
   }
 }
 
@@ -22,6 +23,7 @@ header {
 }
 
 .menu-icon {
+  margin-left: var(--margin-size);
   font-size: 2.2rem;
   cursor: pointer;
 }

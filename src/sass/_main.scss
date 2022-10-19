@@ -1,3 +1,7 @@
+$header-border-size: clamp(15px, 3vw, 30px);
+$todo-padding-size: calc(var(--margin-size) / 2);
+$half-gap-size: calc(var(--gap-size) / 2);
+
 .page-container main {
   display: grid;
   grid-template-columns: 100%;
@@ -5,7 +9,7 @@
   overflow: hidden;
 
   .icon {
-    padding: calc(var(--gap-size) / 2);
+    padding: $half-gap-size;
   }
 
   input[type="checkbox"] {
@@ -16,7 +20,7 @@
     appearance: none;
     width: 1.3rem;
     height: 1.3rem;
-    margin-left: calc((var(--gap-size) / 2));
+    margin-left: $half-gap-size;
     border: 2px solid rgb(var(--main-color));
     border-radius: 4px;
     background-color: #fff;
@@ -48,11 +52,11 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  // TODO: change later
-  gap: 30px;
+  gap: var(--margin-size);
 
   padding: 0.4em;
-  border-left: clamp(15px, 3vw, 30px) solid rgb(var(--all-icon-color));
+  padding-right: $header-border-size;
+  border-left: $header-border-size solid rgb(var(--all-icon-color));
 
   h2 {
     display: -webkit-box;
@@ -60,6 +64,7 @@
     -webkit-box-orient: vertical;
     overflow: hidden;
 
+    min-width: 6rem;
     max-width: 70%;
     margin: 0;
     font-size: clamp(1.2rem, 3vw, 1.5rem);
@@ -69,10 +74,19 @@
     font-size: 2.2rem;
   }
 
+  .icon.icon {
+    padding: min(1vw, 0.5rem);
+  }
+
   .icon:hover {
     background-color: rgb(var(--hover-bg-color));
   }
 
+  // .edit {
+  //   color: rgb(96, 125, 139);
+  //   font-variation-settings: 'FILL' 1;
+  // }
+  // 
   .add {
     font-size: inherit;
     font-weight: 700;
@@ -87,7 +101,7 @@
 
 .todo-container {
   overflow-y: auto;
-  scrollbar-gutter: stable both-edges;
+  scrollbar-gutter: stable;
 }
 
 .todo {
@@ -95,8 +109,8 @@
   align-items: center;
   gap: var(--gap-size);
 
-  margin: 0.6em 1.4em;
-  padding: 0.4em;
+  margin: min(3vw, 1rem) min(3vw, 2.5rem);
+  padding: $todo-padding-size;
   border-left: 7px solid rgb(var(--default-color));
   border-radius: 2px;
   background-color: rgb(var(--second-color));
@@ -106,12 +120,14 @@
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
+    min-width: 5em;
+    margin-left: $todo-padding-size;
   }
 
   .date {
     white-space: nowrap;
     margin-left: auto;
-    margin-right: calc((var(--gap-size) / 2));
+    margin-right: $todo-padding-size;
   }
 
   .edit {
