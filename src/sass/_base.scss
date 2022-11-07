@@ -23,9 +23,7 @@
 html {
   box-sizing: border-box;
   font-size: 100%;
-  
-  // TODO: fix
-  // overflow: hidden;
+  overflow: hidden;
 }
 
 *, *::before, *::after {
