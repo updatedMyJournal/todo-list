@@ -23,10 +23,14 @@
 html {
   box-sizing: border-box;
   font-size: 100%;
+  
+  // TODO: fix
+  // overflow: hidden;
 }
 
 *, *::before, *::after {
   box-sizing: inherit;
+  scrollbar-width: none;
 }
 
 body {
@@ -91,7 +95,8 @@ main {
   font-variation-settings: 'FILL' 0;
 }
 
-.clickable-elem {
+.clickable-elem,
+button {
   cursor: pointer;
 }
 
@@ -99,8 +104,12 @@ main {
   display: none;
 }
 
+// TODO: replace by .scrollable
 .sidebar ul::-webkit-scrollbar,
-.todo-container::-webkit-scrollbar {
+.todo-container::-webkit-scrollbar,
+.modal form::-webkit-scrollbar,
+textarea::-webkit-scrollbar,
+.details-container .description::-webkit-scrollbar {
   display: initial;
   width: 10px;
   height: 10px;
@@ -124,18 +133,21 @@ main {
   color: white;
 }
 
+.bold {
+  font-weight: bold;
+}
+
 @supports (scrollbar-color: auto) {
   html {
     scrollbar-color: rgb(255, 194, 103) rgb(226, 226, 226);
-    scrollbar-width: none;
   }
 
-  .sidebar {
-    scrollbar-width: none;
-  }
-
+  // TODO: replace by .scrollable
   .sidebar ul,
-  .todo-container {
+  .todo-container,
+  .modal form,
+  textarea,
+  .details-container .description {
     scrollbar-width: thin;
   }
 }
