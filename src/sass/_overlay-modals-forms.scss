@@ -70,6 +70,10 @@ $modal-padding: min(4vw, 1em);
       gap: var(--gap-size);
     }
 
+    .priority {
+      max-width: 16rem;
+    }
+
     .priority.low {
       background-color: rgb(var(--low-priority-color));
     }
