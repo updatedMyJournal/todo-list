@@ -115,7 +115,7 @@ $half-gap-size: calc(var(--gap-size) / 2);
   border-radius: 2px;
   background-color: rgb(var(--second-color));
   
-  .todo-title {
+  .name {
     flex: auto;
     white-space: nowrap;
     overflow: hidden;
