@@ -102,12 +102,7 @@ button {
   display: none;
 }
 
-// TODO: replace by .scrollable
-.sidebar ul::-webkit-scrollbar,
-.todo-container::-webkit-scrollbar,
-.modal form::-webkit-scrollbar,
-textarea::-webkit-scrollbar,
-.details-container .description::-webkit-scrollbar {
+.custom-scrollbar::-webkit-scrollbar {
   display: initial;
   width: 10px;
   height: 10px;
@@ -140,16 +135,12 @@ textarea::-webkit-scrollbar,
     scrollbar-color: rgb(255, 194, 103) rgb(226, 226, 226);
   }
 
-  // TODO: replace by .scrollable
-  .sidebar ul,
-  .todo-container,
-  .modal form,
-  textarea,
-  .details-container .description {
+  .custom-scrollbar {
     scrollbar-width: thin;
   }
 }
 
+// TODO: replace by rem
 @media screen and (min-width: 768px) {
   .page-container {
     grid-template-columns: var(--sidebar-width) 1fr;
