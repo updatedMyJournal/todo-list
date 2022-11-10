@@ -34,6 +34,7 @@ $negative-sidebar-width: calc(var(--sidebar-width) * -1);
     list-style-type: none;
     overflow-y: auto;
     scrollbar-gutter: stable;
+    scroll-behavior: smooth;
   }
   
   li {

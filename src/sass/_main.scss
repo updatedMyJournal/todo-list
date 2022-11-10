@@ -102,6 +102,7 @@ $half-gap-size: calc(var(--gap-size) / 2);
 .todo-container {
   overflow-y: auto;
   scrollbar-gutter: stable;
+  scroll-behavior: smooth;
 }
 
 .todo {
@@ -114,6 +115,26 @@ $half-gap-size: calc(var(--gap-size) / 2);
   border-left: 7px solid rgb(var(--default-color));
   border-radius: 2px;
   background-color: rgb(var(--second-color));
+
+  &.low {
+    border-left-color: rgb(var(--low-priority-color));
+  }
+
+  &.medium {
+    border-left-color: rgb(var(--medium-priority-color));
+  }
+
+  &.high {
+    border-left-color: rgb(var(--high-priority-color));
+  }
+
+  &.checked .name {
+    text-decoration: line-through;
+  }
+
+  &.checked > *:not(input[type="checkbox"]) {
+    opacity: 0.5;
+  }
   
   .name {
     flex: auto;

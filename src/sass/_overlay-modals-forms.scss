@@ -72,6 +72,7 @@ $modal-padding: min(4vw, 1em);
 
     .priority {
       max-width: 16rem;
+      background-color: rgb(var(--default-color));
     }
 
     .priority.low {
@@ -84,10 +85,6 @@ $modal-padding: min(4vw, 1em);
 
     .priority.high {
       background-color: rgb(var(--high-priority-color));
-    }
-
-    .priority.default {
-      background-color: rgb(var(--default-color));
     }
   }
 
@@ -234,24 +231,31 @@ $modal-padding: min(4vw, 1em);
     background-color: red;
   }
 
+  button[type="submit"] {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    
+    padding: 0;
+    border: none;
+    background-color: transparent;
+  }
+
   .priority {
     button {
       background-color: rgb(228, 228, 228);
     }
 
-    .low:focus,
     .low.selected {
       background-color: rgb(var(--low-priority-color));
       border: $border-hover;
     }
 
-    .medium:focus,
     .medium.selected {
       background-color: rgb(var(--medium-priority-color));
       border: $border-hover;
     }
 
-    .high:focus,
     .high.selected {
       background-color: rgb(var(--high-priority-color));
       border: $border-hover;
