@@ -1,0 +1,484 @@
+/** 
+ * This module contains all kinds of DOM interactions: inserting, deleting
+ *     showing, hiding of tags, setting and deleting classes etc.
+ * 
+ * @module DOM_interactions
+ */
+
+import { projectStorage, getAllTodoObjectsArr } from "./storage.mjs";
+
+const overlayElem = document.querySelector('.overlay');
+const modalElem = overlayElem.querySelector('.modal');
+const projectContainerElem = document.querySelector('.sidebar .projects');
+const todoContainerElem = document.querySelector('.todo-container');
+const mainHeaderPanelElem = document.querySelector('.header-panel');
+const mainHeaderPanelTextElem = document.querySelector('.header-panel .text');
+const defaultProjectElem = document.querySelector('.default-project');
+
+// Header-panel elements to hide
+const editButtonElem = mainHeaderPanelElem.querySelector('.edit');
+const elemsToHide = [editButtonElem];
+
+export function showOverlay() {
+  overlayElem.classList.remove('hidden');
+}
+
+export function hideOverlay() {
+  overlayElem.classList.add('hidden');
+}
+
+export function switchToDefaultProject() {
+  defaultProjectElem.click();
+}
+
+export function addClassesToModalElem(...classes) {
+  modalElem.className = `modal ${classes.join(' ')}`;
+}
+
+export function resetModal() {
+  modalElem.className = 'modal';
+  modalElem.innerHTML = '';
+}
+
+export function resetTempFlags() {
+  const editedElem = document.querySelector('.editStatus');
+
+  if (editedElem) toggleEditStatus(editedElem);
+}
+
+export function refreshTodoContainer(todoObjectsArr, projectName) {
+  resetTodoContainer();
+  displayTodos(todoObjectsArr, projectName);
+}
+
+export function resetTodoContainer() {
+  todoContainerElem.innerHTML = '';
+}
+
+export function insertModalHeader(headerText) {
+  modalElem.insertAdjacentHTML('afterbegin',
+  `<div class="modal-header">
+    <h2>${headerText}</h2>
+  </div>`);
+}
+
+export function insertModalFooter() {
+  modalElem.insertAdjacentHTML('beforeend', 
+  `<div class="modal-footer">
+    <i class="material-symbols-outlined icon cancel clickable-elem" tabindex="0">cancel</i>
+    <button type="submit" class="accept" form="modalForm">
+      <i class="material-symbols-outlined icon clickable-elem" tabindex="-1">check_circle</i>
+    </button>
+  </div>`);
+}
+
+export function insertAddProjectForm() {
+  modalElem.insertAdjacentHTML('beforeend',
+  `<form action="" class="add-project custom-scrollbar" id="modalForm">
+    <div class="input-wrapper">
+      <label for="name">Name</label>
+      <input type="text" name="name" id="name" maxlength="120" spellcheck="false" required>
+    </div>
+
+    <div class="input-wrapper">
+      <label for="color">Color</label>
+      <input type="color" name="color" value="#9e9e9e" id="color" class="clickable-elem">
+    </div>
+  </form>`);
+}
+
+export function insertEditProjectForm({ name, color }) {
+  modalElem.insertAdjacentHTML('beforeend',
+  `<form action="" class="edit-project custom-scrollbar" id="modalForm">
+    <div class="input-wrapper">
+      <label for="name">Name</label>
+      <input type="text" name="name" value="${name}" id="name" maxlength="120" spellcheck="false" required>
+    </div>
+
+    <div class="input-wrapper">
+      <label for="color">Color</label>
+      <input type="color" name="color" value="${color}" id="color">
+    </div>
+
+    <button class="delete">Delete project</button>
+  </form>`);
+}
+
+export function insertAddTodoForm() {
+  modalElem.insertAdjacentHTML('beforeend',
+  `<form action="" class="add-todo custom-scrollbar" id="modalForm">
+    <div class="input-wrapper">
+      <input type="text" name="name" maxlength="120" placeholder="Name" spellcheck="false" required>
+      <textarea class="custom-scrollbar" name="description" cols="30" rows="4" placeholder="Description" spellcheck="false"></textarea>
+    </div>
+
+    <div class="input-wrapper" tabindex="-1">
+      <label for="date">Due date</label>
+      <input type="date" class="clickable-elem" name="date" id="date">
+    </div>
+
+    <div class="input-wrapper">
+      <label for="selectProject">Project</label>
+      <select name="selectProject" id="selectProject" class="clickable-elem">
+        ${generateHTMLOptionsStringWithProjects()}
+      </select>
+    </div>
+    
+    <div class="input-wrapper priority">
+      <label>Priority</label>
+      <button type="button" class="low" data-priority="low">low</button>
+      <button type="button" class="medium" data-priority="medium">medium</button>
+      <button type="button" class="high" data-priority="high">high</button>
+    </div>
+  </form>`);
+
+  setSelectedAttributeToOptionTag(getElemIndex(getSelectedProject()));
+}
+
+export function insertEditTodoForm({ name, description, dueDate, project, priority }) {
+  modalElem.insertAdjacentHTML('beforeend',
+  `<form action="" class="edit-todo custom-scrollbar" id="modalForm">
+    <div class="input-wrapper">
+      <input type="text" name="name" value="${name}" maxlength="120" placeholder="Name" spellcheck="false" required>
+      <textarea name="description" cols="30" rows="4" placeholder="Description" spellcheck="false">${description}</textarea>
+    </div>
+
+    <div class="input-wrapper" tabindex="-1">
+      <label for="date">Due date</label>
+      <input type="date" class="clickable-elem" name="date" value="${dueDate}" id="date">
+    </div>
+
+    <div class="input-wrapper">
+      <label for="selectProject">Project</label>
+      <select name="selectProject" id="selectProject" class="clickable-elem">
+        ${generateHTMLOptionsStringWithProjects()}
+      </select>
+    </div>
+    
+    <div class="input-wrapper priority">
+      <label>Priority</label>
+      <button type="button" class="low" data-priority="low">low</button>
+      <button type="button" class="medium" data-priority="medium">medium</button>
+      <button type="button" class="high" data-priority="high">high</button>
+    </div>
+
+    <button class="delete">Delete todo</button>
+  </form>`);
+
+  setSelectedAttributeToOptionTag(project.getIndex());
+
+  // set priority if needed
+  if (priority) setPriorityInModalForm(priority);
+}
+
+export function insertTodoDetailsElem({ name, description, dueDate, project, priority }) {
+  modalElem.insertAdjacentHTML('beforeend', 
+  `<div class="details-container">
+    <i class="material-symbols-outlined icon close clickable-elem">close</i>
+
+    <div class="text-container">
+      <h2 class="name">${name}</h2>
+
+      <div class="description custom-scrollbar" data-placeholder="Description">${description}</div>
+    </div>
+
+    <div class="side-container">
+      <div class="input-wrapper">
+        <div class="bold">Due date</div>
+        <div class="date">${dueDate}</div>
+      </div>
+
+      <div class="input-wrapper">
+        <div class="bold">Project</div>
+        <div class="media">
+          <div class="color" style="background-color: ${project.getColor()};"></div>
+          <div class="text">${project.getName()}</div>
+        </div>
+      </div>
+
+      <div class="input-wrapper">
+        <div class="bold">Priority</div>
+        <div class="priority ${priority}">${priority === '' ? 'not set' : priority}</div>
+      </div>
+    </div>
+  </div>`);
+}
+
+export function insertProjectElems(...projectObjects) {
+  const documentFragment = new DocumentFragment();
+
+  for (let projectObj of projectObjects.flat(2)) {
+    const container = document.createElement('div');
+    const { name, color, index } = projectObj.destructurizePrivateFields();
+
+    container.insertAdjacentHTML('beforeend', 
+    `<li class="media-container clickable-elem project-elem" data-name="${name}" data-index="${index}">
+      <div class="media">
+        <div class="color" style="background-color: ${color};"></div>
+        <div class="text">${name}</div>
+      </div>
+      <div class="counter hidden" data-counter="0">0</div>
+    </li>`);
+
+    documentFragment.append(container.firstElementChild);
+  }
+
+  projectContainerElem.append(documentFragment);
+}
+
+// TODO: handle date
+export function insertTodoElems(...todoObjects) {
+  const documentFragment = new DocumentFragment();
+
+  for (let todoObj of todoObjects) {
+    const container = document.createElement('div');
+    const { 
+      checked,
+      name, 
+      dueDate, 
+      priority, 
+      project, 
+      index 
+    } = todoObj.destructurizePrivateFields();
+
+    container.insertAdjacentHTML('beforeend',
+    `<div class="todo clickable-elem ${priority} ${checked ? "checked" : ""}" data-index="${index}" data-project-index="${project.getIndex()}" data-priority="${priority}">
+      <input type="checkbox" class="clickable-elem" ${checked ? "checked" : ""}>
+      <div class="name">${name}</div>
+      <div class="date">${dueDate}</div>
+      <div class="media icons">
+        <i class="material-symbols-outlined icon edit clickable-elem">edit</i>
+        <i class="material-symbols-outlined icon delete clickable-elem">delete</i>
+      </div>
+    </div>`);
+
+    documentFragment.append(container.firstElementChild);
+  }
+
+  todoContainerElem.append(documentFragment);
+}
+
+export function editProjectElem(projectElem, projectObj) {
+  const projectName = projectObj.getName();
+  const projectColor = projectObj.getColor();
+  
+  setProjectElemName(projectElem, projectName);
+  setProjectElemText(projectElem, projectName);
+  setProjectElemColor(projectElem, projectColor);
+}
+
+export function editTodoElem(todoElem, todoObj) {
+  const todoName = todoObj.getName();
+  const todoDueDate = todoObj.getDueDate();
+  const todoPriority = todoObj.getPriority();
+
+  setTodoElemName(todoElem, todoName);
+  setTodoElemDueDate(todoElem, todoDueDate);
+  setTodoElemPriority(todoElem, todoPriority);
+}
+
+export function removeElem(elem) {
+  elem.remove();
+}
+
+export function displayTodos(todoObjectsArr, projectName) {
+  const allTodoObjectsArr = getAllTodoObjectsArr();
+
+  // if there are no todos to display
+  if (allTodoObjectsArr.length <= 0) return;
+  
+  // TODO: sort\filter todoObjectsArr where needed
+  switch(projectName) {
+    case 'All': 
+      insertTodoElems(...allTodoObjectsArr);
+
+      break;
+    case 'Today':
+      // TODO: implement
+
+      break;
+    case 'Next 7 days':
+      // TODO: implement
+
+      break;
+    case 'Archive':
+      // TODO: implement
+
+      break;
+    default:
+      insertTodoElems(...todoObjectsArr);
+  }
+}
+
+export function getModalForm() {
+  return document.querySelector('.modal form');
+}
+
+export function focusOnNameInput() {
+  const inputElem = document.querySelector('.modal form input[name="name"');
+
+  inputElem.focus();
+}
+
+export function getSelectedProject() {
+  return document.querySelector('.project-elem.selected');
+}
+
+export function setHeaderPanelText(str) {
+  mainHeaderPanelTextElem.textContent = str;
+}
+
+export function setHeaderPanelBorderLeftColor(color) {
+  mainHeaderPanelElem.style.borderLeftColor = color;
+}
+
+export function hideExtraHeaderPanelElements() {
+  for (let elem of elemsToHide) {
+    elem.classList.add('removed');
+  }
+}
+
+export function showExtraHeaderPanelElements() {
+  for (let elem of elemsToHide) {
+    elem.classList.remove('removed');
+  }
+}
+
+export function getElemIndex(elem) {
+  return Number(elem.dataset.index);
+} 
+
+export function placeCursorAtTheEndOfText() {
+  const textElements = modalElem.querySelectorAll('input[type="text"], textarea');
+
+  for (let elem of textElements) {
+    elem.setSelectionRange(-1, -1);
+  }
+}
+
+export function toggleEditStatus(elem) {
+  elem.classList.toggle('editStatus');
+}
+
+export function toggleCheckedStatus(elem) {
+  elem.classList.toggle('checked');
+}
+
+export function removeCheckedStatus(elem) {
+  elem.classList.remove('checked');
+}
+
+export function getFormInputValues() {
+  const formElem = getModalForm();
+  const inputNameValue = formElem.name.value.trim();
+  const inputDescriptionValue = formElem.description?.value.trim() ?? '';
+  const inputColorValue = formElem.color?.value ?? '';
+  const inputDateValue = formElem.date?.value ?? '';
+  const priorityValue = formElem
+    .querySelector('.priority .selected')?.dataset.priority ?? '';
+  const inputProjectIndex = Number(
+    formElem
+    .querySelector('select[name="selectProject"]')?.value
+  );
+  let projectObj;
+
+  if (inputProjectIndex != undefined) {
+    projectObj = projectStorage.get(inputProjectIndex);
+  }
+
+  return {
+    name: inputNameValue,
+    description: inputDescriptionValue,
+    color: inputColorValue,
+    dueDate: inputDateValue,
+    priority: priorityValue,
+    project: projectObj
+  }
+}
+
+export function scrollToTheBottomOfTheElem(elem) {
+  const bottomScroll = elem.scrollHeight - elem.offsetHeight - elem.scrollTop;
+
+  if (bottomScroll > 0) elem.scrollTop += bottomScroll;
+}
+
+export function getElemBeingEdited() {
+  return document.querySelector(`.editStatus`);
+}
+
+export function getProjectIndexFromTodoElem(todoElem) {
+  return Number(todoElem.dataset.projectIndex);
+}
+
+export function disableFormValidation() {
+  const formElem = getModalForm();
+    
+  formElem.setAttribute('novalidate', '');
+}
+
+/**
+ * Generate a string with \<option\> HTML tags containing projects
+ * 
+ * @see {@link module:project}
+ */
+function generateHTMLOptionsStringWithProjects() {
+  const arr = [];
+  const projectElements = document.
+    querySelectorAll('.default-project, .projects .project-elem');
+
+  for (let projectElem of projectElements) {
+    const projectName = projectElem.dataset.name;
+    const projectIndex = getElemIndex(projectElem);
+
+    arr.push(`<option value="${projectIndex}"}>${projectName}</option>`);
+  }
+
+  return arr.join('');
+}
+
+function setSelectedAttributeToOptionTag(projectIndex) {
+  const optionElem = modalElem
+    .querySelector(`select[name="selectProject"] option[value="${projectIndex}"]`);
+
+  optionElem.setAttribute('selected', '');
+}
+
+function setPriorityInModalForm(priority) {
+  const priorityButtonElem = modalElem.querySelector(`.priority .${priority}`);
+
+  priorityButtonElem.classList.add('selected');
+}
+
+function setProjectElemName(projectElem, name) {
+  projectElem.dataset.name = name;
+}
+
+function setProjectElemText(projectElem, text) {
+  const textElem = projectElem.querySelector('.text');
+
+  textElem.textContent = text;
+}
+
+function setProjectElemColor(projectElem, projectColor) {
+  const colorElem = projectElem.querySelector('.color');
+
+  colorElem.style.backgroundColor = `${projectColor}`;
+}
+
+function setTodoElemName(todoElem, name) {
+  const textElem = todoElem.querySelector('.name');
+
+  textElem.textContent = name;
+}
+
+function setTodoElemDueDate(todoElem, dueDate) {
+  const dueDateElem = todoElem.querySelector('.date');
+
+  dueDateElem.textContent = dueDate;
+}
+
+function setTodoElemPriority(todoElem, priority) {
+  todoElem.classList.remove('low', 'medium', 'high');
+  todoElem.classList.add(`${priority}`);
+  todoElem.dataset.priority = priority;
+}
