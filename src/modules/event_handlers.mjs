@@ -14,6 +14,12 @@ import {
   getTodoObjectsArrFromStorage 
 } from './storage.mjs';
 
+export function headerHandler(e) {
+  if (e.target.closest('.menu-icon')) {
+    onSidebarIconClick(e);
+  }
+}
+
 export function sidebarHandler(e) {
   if (!e.target.closest('.sidebar')) return;
 
@@ -64,6 +70,11 @@ export function modalHandler(e) {
   } else if (e.target.closest('.delete')) {
     domInteractions.disableFormValidation();
   }
+}
+
+function onSidebarIconClick() {
+  domInteractions.setSuitableIcon();
+  domInteractions.showSidebar();
 }
 
 function onPriorityClick(e) {

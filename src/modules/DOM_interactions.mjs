@@ -416,6 +416,19 @@ export function disableFormValidation() {
   formElem.setAttribute('novalidate', '');
 }
 
+export function setSuitableIcon() {
+  const menuIconElem = document.querySelector('header .menu-icon');
+  const currentIcon = menuIconElem.textContent;
+
+  menuIconElem.textContent = currentIcon == 'menu' ? 'close' : 'menu';
+}
+
+export function showSidebar() {
+  const sidebarElem = document.querySelector('.sidebar');
+
+  sidebarElem.classList.toggle('showSidebar');
+}
+
 /**
  * Generate a string with \<option\> HTML tags containing projects
  * 
