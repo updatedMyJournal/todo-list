@@ -1,12 +1,22 @@
 {
   "source": {
       "includePattern": "\\.m?js$",
+      "excludePattern": "(^|\\/|\\\\)_",
       "include": ["./src"],                     
       "exclude": ["node_modules"]           
-  },                 
+  },
+  "sourceType": "module",
   "opts": {
       "destination": "./docs/",             
       "recurse": true                       
   },
-  "recurseDepth": 10
+  "recurseDepth": 10,
+  "tags": {
+    "allowUnknownTags": true,
+    "dictionaries": ["jsdoc", "closure"]
+  },
+  "templates": {
+    "cleverLinks": false,
+    "monospaceLinks": false
+  }             
 }
