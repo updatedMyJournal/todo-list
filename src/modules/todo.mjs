@@ -7,7 +7,7 @@
  * @property {string} name - a todo title
  * @property {string} description - a todo description
  * @property {string} dueDate - a todo due date
- * @property {Project} project - a project which contains the todo
+ * @property {Project} projectIndex - an index of the project which contains the todo
  * @property {string} priority - a todo priority
  * @property {number} index - a todo index 
  * 
@@ -18,7 +18,7 @@ export default class Todo {
   #name;
   #description;
   #dueDate;
-  #project;
+  #projectIndex;
   #priority;
   #index;
 
@@ -29,7 +29,7 @@ export default class Todo {
    * @param {string} obj.name
    * @param {string} obj.description
    * @param {string} obj.dueDate
-   * @param {Project} obj.project
+   * @param {Project} obj.projectIndex
    * @param {number} obj.index
    * @param {boolean} [obj.checked=false]
    * @param {string} [obj.priority]
@@ -39,17 +39,17 @@ export default class Todo {
       name,
       description,
       dueDate,
-      project,
+      projectIndex,
       index,
       checked = false,
-      priority
+      priority = 'default'
     }
   ) {
     this.#checked = checked;
     this.#name = name;
     this.#description = description;
     this.#dueDate = dueDate;
-    this.#project = project;
+    this.#projectIndex = projectIndex;
     this.#priority = priority;
     this.#index = index;
   }
@@ -87,12 +87,12 @@ export default class Todo {
     this.#dueDate = newDueDate;
   }
 
-  getProject() {
-    return this.#project;
+  getProjectIndex() {
+    return this.#projectIndex;
   }
 
-  setProject(newProject) {
-    this.#project = newProject;
+  setProjectIndex(newProjectIndex) {
+    this.#projectIndex = newProjectIndex;
   }
 
   getPriority() {
@@ -117,9 +117,18 @@ export default class Todo {
       name: this.getName(),
       description: this.getDescription(),
       dueDate: this.getDueDate(),
-      project: this.getProject(),
+      projectIndex: this.getProjectIndex(),
       priority: this.getPriority(),
       index: this.getIndex()
+    }
+  }
+
+  toJSON() {
+    return {
+      className: this.constructor.name,
+      value: {
+        ...this.destructurizePrivateFields()
+      }
     }
   }
 }

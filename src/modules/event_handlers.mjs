@@ -11,7 +11,8 @@ import * as domInteractions from './DOM_interactions.mjs';
 import { 
   projectStorage, 
   getElemObjectFromStorage, 
-  getTodoObjectsArrFromStorage 
+  getTodoObjectsArrFromStorage,
+  saveChangesToLocalStorage
 } from './storage.mjs';
 
 export function headerHandler(e) {
@@ -49,9 +50,7 @@ export function todoContainerHandler(e) {
     onTodoEdit(e);
   } else if (e.target.closest('.delete')) {
     onTodoDelete(e);
-
-    // TODO: implement
-    // saveToLocalStorage();
+    saveChangesToLocalStorage();
   } else if (e.target.closest('input[type="checkbox"]')) {
     onCheckboxClick(e);
   } else if (e.target.closest('.todo')) {
@@ -70,6 +69,11 @@ export function modalHandler(e) {
   } else if (e.target.closest('.delete')) {
     domInteractions.disableFormValidation();
   }
+}
+
+export function renderElementsOnProgramStart() {
+  domInteractions.switchToDefaultProject();
+  domInteractions.displayStandardProjects();
 }
 
 function onSidebarIconClick() {
@@ -267,8 +271,7 @@ function onFormSubmit(e) {
   domInteractions.resetModal();
   domInteractions.resetTempFlags();
 
-  // TODO: implement
-  // saveToLocalStorage();
+  saveChangesToLocalStorage();
 }
 
 function onProjectDelete(e) {
@@ -321,7 +324,7 @@ function onEditProjectSubmit(e) {
 function onAddTodoSubmit(e) {
   const todoContainerElem = document.querySelector('.todo-container');
   const todoObjParams = domInteractions.getFormInputValues();
-  const todoProject = todoObjParams.project;
+  const todoProject = projectStorage.get(todoObjParams.projectIndex);
   const todoIndex = getComputedIndex(todoProject.getTodoStorage());
   const todoObj = new Todo({ ...todoObjParams, index: todoIndex });
 
@@ -338,7 +341,8 @@ function onEditTodoSubmit(e) {
 
   const oldTodoProjectIndex = domInteractions.getProjectIndexFromTodoElem(todoElem);
   const oldTodoProjectObj = projectStorage.get(oldTodoProjectIndex);
-  const newTodoProjectObj = newTodoObjParams.project;
+  const newTodoProjectIndex = newTodoObjParams.projectIndex;
+  const newTodoProjectObj = projectStorage.get(newTodoProjectIndex);
 
   const todoIndex = domInteractions.getElemIndex(todoElem);
   const todoObj = oldTodoProjectObj.getTodo(todoIndex);
@@ -346,7 +350,7 @@ function onEditTodoSubmit(e) {
   todoObj.setName(newTodoObjParams.name);
   todoObj.setDescription(newTodoObjParams.description);
   todoObj.setDueDate(newTodoObjParams.dueDate);
-  todoObj.setProject(newTodoObjParams.project);
+  todoObj.setProjectIndex(newTodoObjParams.projectIndex);
   todoObj.setPriority(newTodoObjParams.priority);
 
   domInteractions.editTodoElem(todoElem, todoObj);

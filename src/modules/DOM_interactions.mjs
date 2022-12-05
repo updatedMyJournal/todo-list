@@ -15,7 +15,7 @@ const mainHeaderPanelElem = document.querySelector('.header-panel');
 const mainHeaderPanelTextElem = document.querySelector('.header-panel .text');
 const defaultProjectElem = document.querySelector('.default-project');
 
-// Header-panel elements to hide
+/** Header-panel elements to hide */
 const editButtonElem = mainHeaderPanelElem.querySelector('.edit');
 const elemsToHide = [editButtonElem];
 
@@ -135,7 +135,7 @@ export function insertAddTodoForm() {
   setSelectedAttributeToOptionTag(getElemIndex(getSelectedProject()));
 }
 
-export function insertEditTodoForm({ name, description, dueDate, project, priority }) {
+export function insertEditTodoForm({ name, description, dueDate, projectIndex, priority }) {
   modalElem.insertAdjacentHTML('beforeend',
   `<form action="" class="edit-todo custom-scrollbar" id="modalForm">
     <div class="input-wrapper">
@@ -165,13 +165,13 @@ export function insertEditTodoForm({ name, description, dueDate, project, priori
     <button class="delete">Delete todo</button>
   </form>`);
 
-  setSelectedAttributeToOptionTag(project.getIndex());
-
-  // set priority if needed
-  if (priority) setPriorityInModalForm(priority);
+  setSelectedAttributeToOptionTag(projectIndex);
+  setPriorityInModalForm(priority);
 }
 
-export function insertTodoDetailsElem({ name, description, dueDate, project, priority }) {
+export function insertTodoDetailsElem({ name, description, dueDate, projectIndex, priority }) {
+  const project = projectStorage.get(projectIndex);
+
   modalElem.insertAdjacentHTML('beforeend', 
   `<div class="details-container">
     <i class="material-symbols-outlined icon close clickable-elem">close</i>
@@ -198,7 +198,7 @@ export function insertTodoDetailsElem({ name, description, dueDate, project, pri
 
       <div class="input-wrapper">
         <div class="bold">Priority</div>
-        <div class="priority ${priority}">${priority === '' ? 'not set' : priority}</div>
+        <div class="priority ${priority}">${priority}</div>
       </div>
     </div>
   </div>`);
@@ -207,7 +207,7 @@ export function insertTodoDetailsElem({ name, description, dueDate, project, pri
 export function insertProjectElems(...projectObjects) {
   const documentFragment = new DocumentFragment();
 
-  for (let projectObj of projectObjects.flat(2)) {
+  for (let projectObj of projectObjects) {
     const container = document.createElement('div');
     const { name, color, index } = projectObj.destructurizePrivateFields();
 
@@ -237,12 +237,12 @@ export function insertTodoElems(...todoObjects) {
       name, 
       dueDate, 
       priority, 
-      project, 
+      projectIndex, 
       index 
     } = todoObj.destructurizePrivateFields();
 
     container.insertAdjacentHTML('beforeend',
-    `<div class="todo clickable-elem ${priority} ${checked ? "checked" : ""}" data-index="${index}" data-project-index="${project.getIndex()}" data-priority="${priority}">
+    `<div class="todo clickable-elem ${priority} ${checked ? "checked" : ""}" data-index="${index}" data-project-index="${projectIndex}" data-priority="${priority}">
       <input type="checkbox" class="clickable-elem" ${checked ? "checked" : ""}>
       <div class="name">${name}</div>
       <div class="date">${dueDate}</div>
@@ -281,10 +281,19 @@ export function removeElem(elem) {
   elem.remove();
 }
 
+/** Render non-default projects */
+export function displayStandardProjects() {
+  const projectObjectsArr = Array
+    .from(projectStorage.values())
+    .filter((val) => !val.isProjectInitial());
+  
+  insertProjectElems(...projectObjectsArr);
+}
+
 export function displayTodos(todoObjectsArr, projectName) {
   const allTodoObjectsArr = getAllTodoObjectsArr();
 
-  // if there are no todos to display
+  /** if there are no todos to display */
   if (allTodoObjectsArr.length <= 0) return;
   
   // TODO: sort\filter todoObjectsArr where needed
@@ -375,16 +384,11 @@ export function getFormInputValues() {
   const inputColorValue = formElem.color?.value ?? '';
   const inputDateValue = formElem.date?.value ?? '';
   const priorityValue = formElem
-    .querySelector('.priority .selected')?.dataset.priority ?? '';
+    .querySelector('.priority .selected')?.dataset.priority ?? 'default';
   const inputProjectIndex = Number(
     formElem
     .querySelector('select[name="selectProject"]')?.value
   );
-  let projectObj;
-
-  if (inputProjectIndex != undefined) {
-    projectObj = projectStorage.get(inputProjectIndex);
-  }
 
   return {
     name: inputNameValue,
@@ -392,7 +396,7 @@ export function getFormInputValues() {
     color: inputColorValue,
     dueDate: inputDateValue,
     priority: priorityValue,
-    project: projectObj
+    projectIndex: inputProjectIndex
   }
 }
 
@@ -457,6 +461,8 @@ function setSelectedAttributeToOptionTag(projectIndex) {
 }
 
 function setPriorityInModalForm(priority) {
+  if (priority === 'default') return;
+
   const priorityButtonElem = modalElem.querySelector(`.priority .${priority}`);
 
   priorityButtonElem.classList.add('selected');
@@ -491,7 +497,7 @@ function setTodoElemDueDate(todoElem, dueDate) {
 }
 
 function setTodoElemPriority(todoElem, priority) {
-  todoElem.classList.remove('low', 'medium', 'high');
+  todoElem.classList.remove('low', 'medium', 'high', 'default');
   todoElem.classList.add(`${priority}`);
   todoElem.dataset.priority = priority;
 }

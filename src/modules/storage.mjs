@@ -6,7 +6,8 @@
  */
 
 import Project from "./project.mjs";
-import getComputedIndex from "./getComputedIndex.mjs";
+import Todo from "./todo.mjs";
+import Factory from "./Factory.mjs";
 
 /**
  * Storage of all projects. _key_: index, _value_: Project
@@ -15,10 +16,49 @@ import getComputedIndex from "./getComputedIndex.mjs";
  * 
  * @see {@link module:project}
  */
-export const projectStorage = new Map();
+export const projectStorage = getProjectStorageFromLocalStorage() ?? new Map();
 
-// TODO: combine with localStorage
-initializeProjectStorage(projectStorage);
+if (projectStorage.size <= 0) {
+  initializeInitialProjectObjects();
+  saveChangesToLocalStorage();
+}
+
+/**
+ * Saves projectStorage to localStorage
+ * 
+ * @see {@link module:storage.projectStorage projectStorage}
+ */
+export function saveChangesToLocalStorage() {
+  const str = JSON.stringify(projectStorage, replacer, 2);
+
+  localStorage.setItem('projectStorage', str);
+}
+
+export function getProjectStorageFromLocalStorage() {
+  const str = localStorage.getItem('projectStorage');
+  const obj = JSON.parse(str, reviver);
+
+  return obj;
+}
+
+function replacer(key, value) {
+  if (value instanceof Map) {
+    return {
+      className: value.constructor.name,
+      value: [...value]
+    }
+  }
+  
+  return value;
+}
+
+function reviver(key, value) {
+  if (value?.className) {
+    return Factory.createInstance(value);
+  }
+
+    return value;
+}
 
 export function getElemObjectFromStorage(storage, elem) {
   const elemObject = storage.get(Number(elem.dataset.index));
@@ -35,7 +75,7 @@ export function getElemObjectFromStorage(storage, elem) {
  * @see {@link module:storage.projectStorage projectStorage}
  */
 export function getAllTodoObjectsArr() {
-  // projectStorage -> [...Project] -> [...Todo]
+  /** projectStorage -> [...Project] -> [...Todo] */
   return [...projectStorage.values()].reduce((arr, proj) => {
     const todoStorage = proj.getTodoStorage();
     const todoObjectsArr = getTodoObjectsArrFromStorage(todoStorage);
@@ -69,7 +109,7 @@ export function getTodoObjectsArrFromStorage(storage) {
  * @see {@link module:project}
  * @see {@link module:storage.projectStorage projectStorage}
  */
- function initializeProjectStorage(projectStorage) {
+ function initializeInitialProjectObjects() {
   const initialProjects = document.querySelectorAll('.initial-project');
 
   for (let projectElem of initialProjects) {
@@ -77,16 +117,15 @@ export function getTodoObjectsArrFromStorage(storage) {
 
     if (!projectName) throw new Error('Initial project name is not set!');
 
-    const projectIndex = getComputedIndex(projectStorage);
+    const projectIndex = Number(projectElem.dataset.index);
     const projectColor = projectElem.dataset.color;
-
-    projectElem.dataset.index = projectIndex;
 
     const projectObj = new Project(
       { 
         name: projectName, 
         color: projectColor, 
-        index: projectIndex
+        index: projectIndex,
+        initial: true
       }
     );
 
