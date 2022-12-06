@@ -57,6 +57,10 @@ function reviver(key, value) {
     return Factory.createInstance(value);
   }
 
+  if (key === 'dueDate' && value != null) {
+    return new Date(value);
+  }
+
     return value;
 }
 

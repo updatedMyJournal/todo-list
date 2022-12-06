@@ -6,6 +6,7 @@
  */
 
 import { projectStorage, getAllTodoObjectsArr } from "./storage.mjs";
+import { format, isValid } from "date-fns";
 
 const overlayElem = document.querySelector('.overlay');
 const modalElem = overlayElem.querySelector('.modal');
@@ -145,7 +146,7 @@ export function insertEditTodoForm({ name, description, dueDate, projectIndex, p
 
     <div class="input-wrapper" tabindex="-1">
       <label for="date">Due date</label>
-      <input type="date" class="clickable-elem" name="date" value="${dueDate}" id="date">
+      <input type="date" class="clickable-elem" name="date" value="${formatDate(dueDate, 'yyyy-LL-dd')}" id="date">
     </div>
 
     <div class="input-wrapper">
@@ -185,7 +186,7 @@ export function insertTodoDetailsElem({ name, description, dueDate, projectIndex
     <div class="side-container">
       <div class="input-wrapper">
         <div class="bold">Due date</div>
-        <div class="date">${dueDate}</div>
+        <div class="date">${formatDate(dueDate, `d MMMM yyyy`)}</div>
       </div>
 
       <div class="input-wrapper">
@@ -226,7 +227,6 @@ export function insertProjectElems(...projectObjects) {
   projectContainerElem.append(documentFragment);
 }
 
-// TODO: handle date
 export function insertTodoElems(...todoObjects) {
   const documentFragment = new DocumentFragment();
 
@@ -245,7 +245,7 @@ export function insertTodoElems(...todoObjects) {
     `<div class="todo clickable-elem ${priority} ${checked ? "checked" : ""}" data-index="${index}" data-project-index="${projectIndex}" data-priority="${priority}">
       <input type="checkbox" class="clickable-elem" ${checked ? "checked" : ""}>
       <div class="name">${name}</div>
-      <div class="date">${dueDate}</div>
+      <div class="date">${formatDate(dueDate, 'd MMM')}</div>
       <div class="media icons">
         <i class="material-symbols-outlined icon edit clickable-elem">edit</i>
         <i class="material-symbols-outlined icon delete clickable-elem">delete</i>
@@ -382,7 +382,7 @@ export function getFormInputValues() {
   const inputNameValue = formElem.name.value.trim();
   const inputDescriptionValue = formElem.description?.value.trim() ?? '';
   const inputColorValue = formElem.color?.value ?? '';
-  const inputDateValue = formElem.date?.value ?? '';
+  const inputDateValue = formElem.date?.value ? new Date(formElem.date.value) : '';
   const priorityValue = formElem
     .querySelector('.priority .selected')?.dataset.priority ?? 'default';
   const inputProjectIndex = Number(
@@ -493,11 +493,25 @@ function setTodoElemName(todoElem, name) {
 function setTodoElemDueDate(todoElem, dueDate) {
   const dueDateElem = todoElem.querySelector('.date');
 
-  dueDateElem.textContent = dueDate;
+  dueDateElem.textContent = formatDate(dueDate, 'd MMM');
 }
 
 function setTodoElemPriority(todoElem, priority) {
   todoElem.classList.remove('low', 'medium', 'high', 'default');
   todoElem.classList.add(`${priority}`);
   todoElem.dataset.priority = priority;
+}
+
+/**
+ * Returns a date string in the given format
+ * 
+ * @param {Date} date 
+ * @param {string} formatStr 
+ * 
+ * @returns {string}
+ */
+function formatDate(date, formatStr) {
+  if (!isValid(date)) return '';
+
+  return format(date, formatStr);
 }

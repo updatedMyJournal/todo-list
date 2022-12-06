@@ -6,7 +6,7 @@
  * @property {boolean} checked - a mark indicating whether the todo is completed
  * @property {string} name - a todo title
  * @property {string} description - a todo description
- * @property {string} dueDate - a todo due date
+ * @property {Date} dueDate - a todo due date
  * @property {Project} projectIndex - an index of the project which contains the todo
  * @property {string} priority - a todo priority
  * @property {number} index - a todo index 
@@ -28,7 +28,7 @@ export default class Todo {
    * @param {Object} obj - an object with some {@link Todo} properties
    * @param {string} obj.name
    * @param {string} obj.description
-   * @param {string} obj.dueDate
+   * @param {Date} [obj.dueDate]
    * @param {Project} obj.projectIndex
    * @param {number} obj.index
    * @param {boolean} [obj.checked=false]
@@ -83,7 +83,6 @@ export default class Todo {
   }
 
   setDueDate(newDueDate) {
-    // TODO: change
     this.#dueDate = newDueDate;
   }
 
