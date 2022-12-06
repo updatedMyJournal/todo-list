@@ -329,10 +329,21 @@ function onAddTodoSubmit(e) {
   const todoIndex = getComputedIndex(todoProject.getTodoStorage());
   const todoObj = new Todo({ ...todoObjParams, index: todoIndex });
 
+  const selectedProjectElem = domInteractions.getSelectedProject();
+  const selectedProjectIndex = domInteractions.getElemIndex(selectedProjectElem);
+  const defaultProjectElem = document.querySelector('.default-project');
+  const defaultProjectIndex = domInteractions.getElemIndex(defaultProjectElem);
+
   todoProject.addTodo(todoObj);
   projectStorage.set(todoProject.getIndex(), todoProject);
 
-  domInteractions.displayTodos([ todoObj ]);
+  if (
+    !selectedProjectElem.classList.contains('initial-project')
+    || selectedProjectElem.classList.contains('default-project')
+  ) {
+    domInteractions.displayTodos([ todoObj ]);
+  } 
+
   domInteractions.scrollToTheBottomOfTheElem(todoContainerElem);
 }
 

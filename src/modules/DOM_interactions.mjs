@@ -132,8 +132,19 @@ export function insertAddTodoForm() {
       <button type="button" class="high" data-priority="high">high</button>
     </div>
   </form>`);
+  
+  const selectedProjectElem = getSelectedProject();
+  const selectedProjectIndex = getElemIndex(selectedProjectElem);
+  const defaultProjectIndex = getElemIndex(defaultProjectElem);
 
-  setSelectedAttributeToOptionTag(getElemIndex(getSelectedProject()));
+  if (
+    selectedProjectElem.classList.contains('initial-project')
+    && !selectedProjectElem.classList.contains('default-project')
+  ) {
+    setSelectedAttributeToOptionTag(defaultProjectIndex);
+  } else {
+    setSelectedAttributeToOptionTag(selectedProjectIndex);
+  }
 }
 
 export function insertEditTodoForm({ name, description, dueDate, projectIndex, priority }) {
