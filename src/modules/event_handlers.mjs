@@ -225,8 +225,14 @@ function onCheckboxClick(e) {
   const isTodoChecked = todoObject.getChecked();
 
   todoObject.setChecked(!isTodoChecked);
-
   domInteractions.toggleCheckedStatus(todoElem);
+
+  const selectedProjectElem = domInteractions.getSelectedProject();
+  const selectedProjectName = selectedProjectElem.dataset.name;
+
+  if (selectedProjectElem.classList.contains('initial-project')) {
+    domInteractions.refreshTodoContainer(null, selectedProjectName);
+  }
 }
 
 function onCancel(e) {
@@ -367,24 +373,24 @@ function onEditTodoSubmit(e) {
 
   domInteractions.editTodoElem(todoElem, todoObj);
 
+  const currentProjectElem = domInteractions.getSelectedProject();
+  const currentProjectName = currentProjectElem.dataset.name;
+  const currentProjectObj = getElemObjectFromStorage(projectStorage, currentProjectElem);
+  const currentProjectTodoStorage = currentProjectObj.getTodoStorage();
+  const todoObjectsArr = getTodoObjectsArrFromStorage(currentProjectTodoStorage);
+
   /**
    * if project has changed, delete todoObj from the old project,
    *    add it to the new one, and refresh todoContainer
    */
   if (newTodoProjectObj !== oldTodoProjectObj) {
-    const currentProjectElem = domInteractions.getSelectedProject();
-    const currentProjectName = currentProjectElem.dataset.name;
-    const currentProjectObj = getElemObjectFromStorage(projectStorage, currentProjectElem);
-    const currentProjectTodoStorage = currentProjectObj.getTodoStorage();
     const newProjectTodoStorage = newTodoProjectObj.getTodoStorage();
     const newTodoIndex = getComputedIndex(newProjectTodoStorage);
     
     oldTodoProjectObj.deleteTodo(todoIndex);
     todoObj.setIndex(newTodoIndex);
     newTodoProjectObj.addTodo(todoObj);
-
-    const todoObjectsArr = getTodoObjectsArrFromStorage(currentProjectTodoStorage);
-
-    domInteractions.refreshTodoContainer(todoObjectsArr, currentProjectName);
   }
+
+  domInteractions.refreshTodoContainer(todoObjectsArr, currentProjectName);
 }

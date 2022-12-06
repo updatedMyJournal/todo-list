@@ -6,7 +6,7 @@
  */
 
 import { projectStorage, getAllTodoObjectsArr } from "./storage.mjs";
-import { format, isValid } from "date-fns";
+import { format, isValid, isToday, addWeeks, isPast } from "date-fns";
 
 const overlayElem = document.querySelector('.overlay');
 const modalElem = overlayElem.querySelector('.modal');
@@ -307,24 +307,49 @@ export function displayTodos(todoObjectsArr, projectName) {
   /** if there are no todos to display */
   if (allTodoObjectsArr.length <= 0) return;
   
-  // TODO: sort\filter todoObjectsArr where needed
   switch(projectName) {
     case 'All': 
       insertTodoElems(...allTodoObjectsArr);
 
       break;
-    case 'Today':
-      // TODO: implement
+    case 'Today': {
+      const todayTodoObjectsArr = allTodoObjectsArr.filter((todoObj) => {
+        const todoDueDate = todoObj.getDueDate();
+
+        return isToday(todoDueDate);
+      });
+
+      insertTodoElems(...todayTodoObjectsArr);
 
       break;
-    case 'Next 7 days':
-      // TODO: implement
+    }
+    case 'Next 7 days': {
+      const weekTodoObjectsArr = allTodoObjectsArr.filter((todoObj) => {
+        const todoDueDate = todoObj.getDueDate();
+        const deadlineDate = addWeeks(new Date(), 1);
+
+        if (todoDueDate == null || (isPast(todoDueDate) && !isToday(todoDueDate))) {
+          return false;
+        }
+  
+        return todoDueDate <= deadlineDate;
+      });
+
+      insertTodoElems(...weekTodoObjectsArr);
 
       break;
-    case 'Archive':
-      // TODO: implement
+    }
+    case 'Archive': {
+      const checkedTodoObjectsArr = allTodoObjectsArr.filter((todoObj) => {
+        const isTodoChecked = todoObj.getChecked();
+
+        return isTodoChecked;
+      });
+
+      insertTodoElems(...checkedTodoObjectsArr);
 
       break;
+    }
     default:
       insertTodoElems(...todoObjectsArr);
   }
