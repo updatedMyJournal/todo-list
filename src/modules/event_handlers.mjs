@@ -53,6 +53,7 @@ export function todoContainerHandler(e) {
     saveChangesToLocalStorage();
   } else if (e.target.closest('input[type="checkbox"]')) {
     onCheckboxClick(e);
+    saveChangesToLocalStorage();
   } else if (e.target.closest('.todo')) {
     onTodoClick(e);
   }
