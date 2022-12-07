@@ -51,9 +51,13 @@ export function todoContainerHandler(e) {
   } else if (e.target.closest('.delete')) {
     onTodoDelete(e);
     saveChangesToLocalStorage();
+
+    domInteractions.refreshCounters();
   } else if (e.target.closest('input[type="checkbox"]')) {
     onCheckboxClick(e);
     saveChangesToLocalStorage();
+
+    domInteractions.refreshCounters();
   } else if (e.target.closest('.todo')) {
     onTodoClick(e);
   }
@@ -69,12 +73,14 @@ export function modalHandler(e) {
     onCancel(e);
   } else if (e.target.closest('.delete')) {
     domInteractions.disableFormValidation();
+    domInteractions.refreshCounters();
   }
 }
 
 export function renderElementsOnProgramStart() {
   domInteractions.switchToDefaultProject();
   domInteractions.displayStandardProjects();
+  domInteractions.refreshCounters();
 }
 
 function onSidebarIconClick() {
@@ -183,9 +189,9 @@ function onTodoAdd(e) {
 function onTodoEdit(e) {
   const todoElem = e.target.closest('.todo');
   const projectElemIndex = domInteractions.getProjectIndexFromTodoElem(todoElem);
-  const projectElem = projectStorage.get(projectElemIndex);
+  const projectObj = projectStorage.get(projectElemIndex);
   const todoIndex = domInteractions.getElemIndex(todoElem);
-  const todoObj = projectElem.getTodo(todoIndex);
+  const todoObj = projectObj.getTodo(todoIndex);
 
   domInteractions.insertModalHeader('Edit todo');
   domInteractions.insertEditTodoForm(todoObj.destructurizePrivateFields());
@@ -207,9 +213,9 @@ function onTodoClick(e) {
   if (!todoElem) return;
   
   const projectElemIndex = domInteractions.getProjectIndexFromTodoElem(todoElem);
-  const projectElem = projectStorage.get(projectElemIndex);
+  const projectObj = projectStorage.get(projectElemIndex);
   const todoIndex = domInteractions.getElemIndex(todoElem);
-  const todoObj = projectElem.getTodo(todoIndex);
+  const todoObj = projectObj.getTodo(todoIndex);
 
   domInteractions.addClassesToModalElem('details');
   domInteractions.insertTodoDetailsElem(todoObj.destructurizePrivateFields());
@@ -277,6 +283,7 @@ function onFormSubmit(e) {
   domInteractions.hideOverlay();
   domInteractions.resetModal();
   domInteractions.resetTempFlags();
+  domInteractions.refreshCounters();
 
   saveChangesToLocalStorage();
 }
@@ -336,9 +343,6 @@ function onAddTodoSubmit(e) {
   const todoObj = new Todo({ ...todoObjParams, index: todoIndex });
 
   const selectedProjectElem = domInteractions.getSelectedProject();
-  const selectedProjectIndex = domInteractions.getElemIndex(selectedProjectElem);
-  const defaultProjectElem = document.querySelector('.default-project');
-  const defaultProjectIndex = domInteractions.getElemIndex(defaultProjectElem);
 
   todoProject.addTodo(todoObj);
   projectStorage.set(todoProject.getIndex(), todoProject);

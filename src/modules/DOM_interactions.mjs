@@ -5,7 +5,7 @@
  * @module DOM_interactions
  */
 
-import { projectStorage, getAllTodoObjectsArr } from "./storage.mjs";
+import { projectStorage, getAllTodoObjectsArr, getElemObjectFromStorage } from "./storage.mjs";
 import { format, isValid, isToday, addWeeks, isPast } from "date-fns";
 
 const overlayElem = document.querySelector('.overlay');
@@ -21,11 +21,11 @@ const editButtonElem = mainHeaderPanelElem.querySelector('.edit');
 const elemsToHide = [editButtonElem];
 
 export function showOverlay() {
-  overlayElem.classList.remove('hidden');
+  showElem(overlayElem);
 }
 
 export function hideOverlay() {
-  overlayElem.classList.add('hidden');
+  hideElem(overlayElem);
 }
 
 export function switchToDefaultProject() {
@@ -229,9 +229,9 @@ export function insertProjectElems(...projectObjects) {
         <div class="color" style="background-color: ${color};"></div>
         <div class="text">${name}</div>
       </div>
-      <div class="counter hidden" data-counter="0">0</div>
+      <div class="counter hidden">0</div>
     </li>`);
-
+    
     documentFragment.append(container.firstElementChild);
   }
 
@@ -313,38 +313,21 @@ export function displayTodos(todoObjectsArr, projectName) {
 
       break;
     case 'Today': {
-      const todayTodoObjectsArr = allTodoObjectsArr.filter((todoObj) => {
-        const todoDueDate = todoObj.getDueDate();
-
-        return isToday(todoDueDate);
-      });
+      const todayTodoObjectsArr = allTodoObjectsArr.filter(todayFilter);
 
       insertTodoElems(...todayTodoObjectsArr);
 
       break;
     }
     case 'Next 7 days': {
-      const weekTodoObjectsArr = allTodoObjectsArr.filter((todoObj) => {
-        const todoDueDate = todoObj.getDueDate();
-        const deadlineDate = addWeeks(new Date(), 1);
-
-        if (todoDueDate == null || (isPast(todoDueDate) && !isToday(todoDueDate))) {
-          return false;
-        }
-  
-        return todoDueDate <= deadlineDate;
-      });
+      const weekTodoObjectsArr = allTodoObjectsArr.filter(weekFilter);
 
       insertTodoElems(...weekTodoObjectsArr);
 
       break;
     }
     case 'Archive': {
-      const checkedTodoObjectsArr = allTodoObjectsArr.filter((todoObj) => {
-        const isTodoChecked = todoObj.getChecked();
-
-        return isTodoChecked;
-      });
+      const checkedTodoObjectsArr = allTodoObjectsArr.filter(archiveFilter);
 
       insertTodoElems(...checkedTodoObjectsArr);
 
@@ -418,7 +401,7 @@ export function getFormInputValues() {
   const inputNameValue = formElem.name.value.trim();
   const inputDescriptionValue = formElem.description?.value.trim() ?? '';
   const inputColorValue = formElem.color?.value ?? '';
-  const inputDateValue = formElem.date?.value ? new Date(formElem.date.value) : '';
+  const inputDateValue = formElem.date?.value ? new Date(formElem.date.value) : undefined;
   const priorityValue = formElem
     .querySelector('.priority .selected')?.dataset.priority ?? 'default';
   const inputProjectIndex = Number(
@@ -467,6 +450,145 @@ export function showSidebar() {
   const sidebarElem = document.querySelector('.sidebar');
 
   sidebarElem.classList.toggle('showSidebar');
+}
+
+export function getProjectElem(projectIndex) {
+  return document.querySelector(`.project-elem[data-index="${projectIndex}"]`);
+}
+
+export function refreshCounters() {
+  renderInitialProjectCounters();
+  renderStandardProjectCounters();
+}
+
+export function renderInitialProjectCounters() {
+  const initialProjectElems = document.querySelectorAll('.initial-project');
+
+  for (const projectElem of initialProjectElems) {
+    const projectObj = getElemObjectFromStorage(projectStorage, projectElem);
+    const projectName = projectObj.getName();
+
+    const allTodoObjectsArr = getAllTodoObjectsArr();
+    const counterElem = projectElem.querySelector('.counter');
+
+    let numOfUncheckedTodos;
+
+    switch(projectName) {
+      case 'All': 
+        numOfUncheckedTodos = getNumOfUncheckedTodos(allTodoObjectsArr);
+  
+        break;
+      case 'Today': {
+        const todayTodoObjectsArr = allTodoObjectsArr.filter(todayFilter);
+
+        numOfUncheckedTodos = getNumOfUncheckedTodos(todayTodoObjectsArr);
+  
+        break;
+      }
+      case 'Next 7 days': {
+        const weekTodoObjectsArr = allTodoObjectsArr.filter(weekFilter);
+  
+        numOfUncheckedTodos = getNumOfUncheckedTodos(weekTodoObjectsArr);
+  
+        break;
+      }
+      default:
+        return;
+    }
+
+    counterElem.textContent = numOfUncheckedTodos;
+
+    if (numOfUncheckedTodos > 0) {
+      showCounter(counterElem);
+    } else {
+      hideCounter(counterElem);
+    }
+  }
+}
+
+export function renderStandardProjectCounters() {
+  const standardProjectElems = document
+    .querySelectorAll('.project-elem:not(.initial-project)');
+
+  for (const projectElem of standardProjectElems) {
+    const projectObj = getElemObjectFromStorage(projectStorage, projectElem);
+    const todoStorage = projectObj.getTodoStorage();
+    const numOfUncheckedTodos = getNumOfUncheckedTodos([...todoStorage.values()]);
+    const counterElem = projectElem.querySelector('.counter');
+
+    counterElem.textContent = numOfUncheckedTodos;
+
+    if (numOfUncheckedTodos > 0) {
+      showCounter(counterElem);
+    } else {
+      hideCounter(counterElem);
+    }
+  }
+}
+
+export function incrementCounter(projectElem) {
+  const counterElem = projectElem.querySelector('.counter');
+  let counter = Number(counterElem.textContent) ?? 0;
+
+  counter++;
+  counterElem.textContent = counter;
+
+  if (counter > 0) showCounter(counterElem);
+}
+
+export function decrementCounter(projectElem) {
+  const counterElem = projectElem.querySelector('.counter');
+  let counter = Number(counterElem.textContent) ?? 0;
+
+  counter--;
+  counterElem.textContent = counter;
+
+  if (counter <= 0) hideCounter(counterElem);
+}
+
+function getNumOfUncheckedTodos(todosArr) {
+  const uncheckedTodosArr = todosArr.filter((todoObj) => !todoObj.getChecked());
+
+  return uncheckedTodosArr.length;
+}
+
+function todayFilter(todoObj) {
+  const todoDueDate = todoObj.getDueDate();
+
+  return isToday(todoDueDate);
+}
+
+function weekFilter(todoObj) {
+  const todoDueDate = todoObj.getDueDate();
+  const deadlineDate = addWeeks(new Date(), 1);
+
+  if (todoDueDate == null || (isPast(todoDueDate) && !isToday(todoDueDate))) {
+    return false;
+  }
+
+  return todoDueDate <= deadlineDate;
+}
+
+function archiveFilter(todoObj) {
+  const isTodoChecked = todoObj.getChecked();
+
+  return isTodoChecked;
+}
+
+function showCounter(counterElem) {
+  showElem(counterElem);
+}
+
+function hideCounter(counterElem) {
+  hideElem(counterElem);
+}
+
+function showElem(elem) {
+  elem.classList.remove('hidden');
+}
+
+function hideElem(elem) {
+  elem.classList.add('hidden');
 }
 
 /**
