@@ -39,7 +39,9 @@ export function headerPanelHandler(e) {
   } else if (e.target.closest('.edit')) {
     onProjectEdit(e);
   } else if (e.target.closest('.sort')) {
-    // TODO: implement
+    onTodoSort(e);
+  } else if (e.target.closest('.dropdown')) {
+    onDropdownOptionSelect(e);
   }
 }
 
@@ -86,6 +88,11 @@ export function renderElementsOnProgramStart() {
 function onSidebarIconClick() {
   domInteractions.setSuitableIcon();
   domInteractions.showSidebar();
+}
+
+export function transparentOverlayHandler(e) {
+  domInteractions.hideSortDropdown();
+  domInteractions.hideTransparentOverlay();
 }
 
 function onPriorityClick(e) {
@@ -205,6 +212,26 @@ function onTodoEdit(e) {
   domInteractions.showOverlay();
   domInteractions.focusOnNameInput();
   domInteractions.placeCursorAtTheEndOfText();
+}
+
+function onTodoSort(e) {
+  domInteractions.showTransparentOverlay();
+  domInteractions.showSortDropdown();
+}
+
+function onDropdownOptionSelect(e) {
+  const optionElem = e.target.closest('.dropdown-option');
+
+  if (!optionElem) return;
+
+  const prevSelectedOptionElem = document.querySelector('.dropdown-option.selected');
+
+  prevSelectedOptionElem?.classList.remove('selected');
+  optionElem.classList.add('selected');
+
+  domInteractions.sortTodos();
+  domInteractions.hideSortDropdown();
+  domInteractions.hideTransparentOverlay();
 }
 
 function onTodoClick(e) {

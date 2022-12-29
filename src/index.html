@@ -74,7 +74,16 @@
         <div class="media icons">
           <i class="material-symbols-outlined icon add clickable-elem">add</i>
           <i class="material-symbols-outlined icon edit clickable-elem removed">edit</i>
-          <i class="material-symbols-outlined icon sort clickable-elem">sort</i>
+          <div class="wrapper">
+            <i class="material-symbols-outlined icon sort clickable-elem">sort</i>
+            <div class="dropdown sort-dropdown hidden" tabindex="0">
+              <div class="dropdown-option selected" data-value="default">Default</div>
+              <div class="dropdown-option" data-value="name">Name</div>
+              <div class="dropdown-option" data-value="dueDate">Due date</div>
+              <div class="dropdown-option" data-value="priority">Priority</div>
+              <div class="dropdown-option" data-value="checked">Checked</div>
+            </div>
+          </div>
         </div>
       </div>
 
@@ -86,5 +95,7 @@
   <div class="overlay hidden">
     <div class="modal"></div>
   </div>
+
+  <div class="overlay transparent hidden"></div>
 </body>
 </html>

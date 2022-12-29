@@ -8,12 +8,14 @@ document.addEventListener('DOMContentLoaded', () => {
   const sidebarElem = document.querySelector('.sidebar');
   const headerPanelElem = document.querySelector('.header-panel');
   const todoContainerElem = document.querySelector('.todo-container');
+  const transparentOverlayElem = document.querySelector('.overlay.transparent');
 
   modalElem.addEventListener('click', eventHandlers.modalHandler);
   headerElem.addEventListener('click', eventHandlers.headerHandler);
   sidebarElem.addEventListener('click', eventHandlers.sidebarHandler);
   headerPanelElem.addEventListener('click', eventHandlers.headerPanelHandler);
   todoContainerElem.addEventListener('click', eventHandlers.todoContainerHandler);
+  transparentOverlayElem.addEventListener('click', eventHandlers.transparentOverlayHandler);
 
   eventHandlers.renderElementsOnProgramStart();
 });

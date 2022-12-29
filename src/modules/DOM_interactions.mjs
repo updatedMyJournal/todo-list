@@ -6,15 +6,17 @@
  */
 
 import { projectStorage, getAllTodoObjectsArr, getElemObjectFromStorage } from "./storage.mjs";
-import { format, isValid, isToday, addWeeks, isPast } from "date-fns";
+import { format, isValid, isToday, addWeeks, isPast, compareAsc } from "date-fns";
 
 const overlayElem = document.querySelector('.overlay');
+const transparentOverlayElem = document.querySelector('.overlay.transparent');
 const modalElem = overlayElem.querySelector('.modal');
 const projectContainerElem = document.querySelector('.sidebar .projects');
 const todoContainerElem = document.querySelector('.todo-container');
 const mainHeaderPanelElem = document.querySelector('.header-panel');
 const mainHeaderPanelTextElem = document.querySelector('.header-panel .text');
 const defaultProjectElem = document.querySelector('.default-project');
+const sortDropdownElem = document.querySelector('.sort-dropdown');
 
 /** Header-panel elements to hide */
 const editButtonElem = mainHeaderPanelElem.querySelector('.edit');
@@ -26,6 +28,14 @@ export function showOverlay() {
 
 export function hideOverlay() {
   hideElem(overlayElem);
+}
+
+export function showTransparentOverlay() {
+  showElem(transparentOverlayElem);
+}
+
+export function hideTransparentOverlay() {
+  hideElem(transparentOverlayElem);
 }
 
 export function switchToDefaultProject() {
@@ -336,6 +346,64 @@ export function displayTodos(todoObjectsArr, projectName) {
     default:
       insertTodoElems(...todoObjectsArr);
   }
+
+  sortTodos();
+}
+
+export function sortTodos() {
+  const selectedSortValue = document
+    .querySelector('.dropdown-option.selected')
+    .dataset
+    .value;
+
+  if (selectedSortValue === 'default') {
+    const currentProjectElem = getSelectedProject();
+
+    currentProjectElem.click();
+
+    return;
+  }
+
+  [...todoContainerElem.children].sort((todo1, todo2) => {
+    const todo1Project = projectStorage.get(getProjectIndexFromTodoElem(todo1));
+    const todo2Project = projectStorage.get(getProjectIndexFromTodoElem(todo2));
+    const todo1Obj = todo1Project
+      .getTodoStorage()
+      .get(getElemIndex(todo1))
+      .destructurizePrivateFields();
+    const todo2Obj = todo2Project
+      .getTodoStorage()
+      .get(getElemIndex(todo2))
+      .destructurizePrivateFields();
+
+    const getPriorityNumber = (priority) => {
+      switch(priority) {
+        case 'low': return 1;
+        case 'medium': return 2;
+        case 'high': return 3;
+        default: return 4;
+      }
+    }
+
+    switch(selectedSortValue) {
+      case 'priority': {
+        const todo1PriorityNum = getPriorityNumber(todo1Obj[selectedSortValue]);
+        const todo2PriorityNum = getPriorityNumber(todo2Obj[selectedSortValue]);
+
+        return todo1PriorityNum > todo2PriorityNum ? 1 : -1;
+      }
+      case 'dueDate': {
+        if (!isValid(todo1Obj[selectedSortValue])) return 1;
+        if (!isValid(todo2Obj[selectedSortValue])) return -1;
+        
+        return compareAsc(todo1Obj[selectedSortValue], todo2Obj[selectedSortValue]);
+      }
+      case 'checked':
+        return todo1Obj[selectedSortValue] ? -1 : 1;
+      default: 
+        return todo1Obj[selectedSortValue] > todo2Obj[selectedSortValue] ? 1 : -1;
+    }
+  }).forEach((todo) => todoContainerElem.append(todo));
 }
 
 export function getModalForm() {
@@ -545,6 +613,15 @@ export function decrementCounter(projectElem) {
 
   if (counter <= 0) hideCounter(counterElem);
 }
+
+export function showSortDropdown() {
+  showElem(sortDropdownElem);
+}
+
+export function hideSortDropdown() {
+  hideElem(sortDropdownElem);
+}
+
 
 function getNumOfUncheckedTodos(todosArr) {
   const uncheckedTodosArr = todosArr.filter((todoObj) => !todoObj.getChecked());
