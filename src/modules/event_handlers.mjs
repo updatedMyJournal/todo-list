@@ -345,7 +345,11 @@ function onAddProjectSubmit(e) {
   projectStorage.set(projectIndex, projectObj);
 
   domInteractions.insertProjectElems(projectObj);
-  domInteractions.scrollToTheBottomOfTheElem(projectContainerElem);
+
+  const projectElem = projectContainerElem
+    .querySelector(`.project-elem[data-index="${projectIndex}"`);
+
+    domInteractions.scrollToTheBottomOfTheElem(projectElem);
 }
 
 function onEditProjectSubmit(e) {
@@ -381,7 +385,9 @@ function onAddTodoSubmit(e) {
     domInteractions.displayTodos([ todoObj ]);
   } 
 
-  domInteractions.scrollToTheBottomOfTheElem(todoContainerElem);
+  const todoElem = todoContainerElem.querySelector(`.todo[data-index="${todoIndex}"`);
+  
+  domInteractions.scrollToTheBottomOfTheElem(todoElem);
 }
 
 function onEditTodoSubmit(e) {

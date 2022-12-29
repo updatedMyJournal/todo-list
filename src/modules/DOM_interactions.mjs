@@ -488,9 +488,7 @@ export function getFormInputValues() {
 }
 
 export function scrollToTheBottomOfTheElem(elem) {
-  const bottomScroll = elem.scrollHeight - elem.offsetHeight - elem.scrollTop;
-
-  if (bottomScroll > 0) elem.scrollTop += bottomScroll;
+  elem.scrollIntoView(false);
 }
 
 export function getElemBeingEdited() {
