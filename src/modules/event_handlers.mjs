@@ -65,7 +65,6 @@ export function todoContainerHandler(e) {
   }
 }
 
-// TODO: might add keyboard support
 export function modalHandler(e) {
   if (!e.target.closest('.modal')) return;
 
@@ -155,8 +154,10 @@ function onProjectAdd(e) {
   domInteractions.insertModalFooter();
 
   const form = domInteractions.getModalForm();
+  const nameInput = domInteractions.getNameInput();
 
   form.onsubmit = onFormSubmit;
+  nameInput.oninput = onNameInput;
 
   domInteractions.showOverlay();
   domInteractions.focusOnNameInput();
@@ -172,8 +173,10 @@ function onProjectEdit(e) {
   domInteractions.toggleEditStatus(projectElem);
 
   const form = domInteractions.getModalForm();
+  const nameInput = domInteractions.getNameInput();
 
   form.onsubmit = onFormSubmit;
+  nameInput.oninput = onNameInput;
 
   domInteractions.showOverlay();
   domInteractions.focusOnNameInput();
@@ -186,8 +189,10 @@ function onTodoAdd(e) {
   domInteractions.insertModalFooter();
 
   const form = domInteractions.getModalForm();
+  const nameInput = domInteractions.getNameInput();
 
   form.onsubmit = onFormSubmit;
+  nameInput.oninput = onNameInput;
 
   domInteractions.showOverlay();
   domInteractions.focusOnNameInput();
@@ -206,8 +211,10 @@ function onTodoEdit(e) {
   domInteractions.insertModalFooter();
 
   const form = domInteractions.getModalForm();
+  const nameInput = domInteractions.getNameInput();
 
   form.onsubmit = onFormSubmit;
+  nameInput.oninput = onNameInput;
 
   domInteractions.showOverlay();
   domInteractions.focusOnNameInput();
@@ -274,7 +281,6 @@ function onCancel(e) {
   domInteractions.resetTempFlags();
 }
 
-// TODO: might add js validation
 function onFormSubmit(e) {
   const formElem = domInteractions.getModalForm();
   const inputNameValue = formElem.name.value.trim();
@@ -282,7 +288,6 @@ function onFormSubmit(e) {
   
   e.preventDefault();
 
-  // TODO: maybe show an error message
   if (inputNameValue === '' && !isSubmitterDeleteButton) {
     domInteractions.focusOnNameInput();
 
@@ -430,4 +435,15 @@ function onEditTodoSubmit(e) {
   }
 
   domInteractions.refreshTodoContainer(todoObjectsArr, currentProjectName);
+}
+
+function onNameInput(e) {
+  const nameInputElem = e.target.closest('input[type="text"]');
+  const value = nameInputElem.value?.trim();
+
+  if (value === '') {
+    domInteractions.showFormError('Cannot be empty!');
+  } else {
+    domInteractions.hideFormError();
+  }
 }

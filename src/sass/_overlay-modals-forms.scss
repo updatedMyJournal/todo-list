@@ -54,9 +54,20 @@ $modal-padding: min(4vw, 1em);
     flex-direction: column;
     gap: var(--margin-size);
 
+    position: relative;
     min-height: 5rem;
     overflow-y: auto;
     scrollbar-gutter: stable both-edges;
+  }
+
+  form.error::before {
+    content: attr(data-error-text);
+
+    position: absolute;
+    right: $modal-padding;
+    top: 0;
+
+    color: red;
   }
 
   .details-container {

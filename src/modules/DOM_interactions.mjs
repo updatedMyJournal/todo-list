@@ -620,6 +620,24 @@ export function hideSortDropdown() {
   hideElem(sortDropdownElem);
 }
 
+export function showFormError(str) {
+  const formElem = modalElem.querySelector('form');
+
+  formElem.classList.add('error');
+  formElem.dataset.errorText = str;
+}
+
+export function hideFormError() {
+  const formElem = modalElem.querySelector('form');
+
+  formElem.classList.remove('error');
+}
+
+export function getNameInput() {
+  const formElem = modalElem.querySelector('form');
+
+  return formElem.querySelector('input[type="text"][name="name"]');
+}
 
 function getNumOfUncheckedTodos(todosArr) {
   const uncheckedTodosArr = todosArr.filter((todoObj) => !todoObj.getChecked());
