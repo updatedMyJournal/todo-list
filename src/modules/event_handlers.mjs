@@ -270,8 +270,13 @@ function onCheckboxClick(e) {
   const selectedProjectElem = domInteractions.getSelectedProject();
   const selectedProjectName = selectedProjectElem.dataset.name;
 
-  if (selectedProjectElem.classList.contains('initial-project')) {
+  if (
+    selectedProjectElem.classList.contains('initial-project')
+    && selectedProjectElem.dataset.name === 'Archive'
+  ) {
     domInteractions.refreshTodoContainer(null, selectedProjectName);
+  } else if (domInteractions.areTodosSordedByChecked()) {
+    domInteractions.sortTodos();
   }
 }
 

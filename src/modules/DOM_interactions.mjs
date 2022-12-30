@@ -639,6 +639,15 @@ export function getNameInput() {
   return formElem.querySelector('input[type="text"][name="name"]');
 }
 
+export function areTodosSordedByChecked() {
+  const dropdownOptionValue = sortDropdownElem
+    .querySelector('.dropdown-option.selected')
+    .dataset
+    .value;
+
+  return dropdownOptionValue === 'checked';
+}
+
 function getNumOfUncheckedTodos(todosArr) {
   const uncheckedTodosArr = todosArr.filter((todoObj) => !todoObj.getChecked());
 
