@@ -145,6 +145,12 @@ $half-gap-size: calc(var(--gap-size) / 2);
   border-left: 7px solid rgb(var(--default-color));
   border-radius: 2px;
   background-color: rgb(var(--second-color));
+  transition: transform 0.2s, box-shadow 0.2s;
+
+  &:hover {
+    transform: scale(101.2%);
+    box-shadow: 3px 3px 6px rgb(166, 166, 166);
+  }
 
   &.low {
     border-left-color: rgb(var(--low-priority-color));

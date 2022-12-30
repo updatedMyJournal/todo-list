@@ -61,6 +61,10 @@ body {
 
 header {
   grid-area: head;
+
+  h1, .logo-icon {
+    animation: focus-in-expand 0.8s cubic-bezier(0.250, 0.460, 0.450, 0.940) both;
+  }
 }
 
 .sidebar {
@@ -95,6 +99,7 @@ main {
 .material-symbols-outlined {
   font-size: 1.6rem;
   font-variation-settings: 'FILL' 0;
+  transition: background-color 0.1s, color 0.2s;
 }
 
 .clickable-elem,
@@ -150,5 +155,18 @@ button {
     grid-template-areas:
     'head head'
     'side main';
+  }
+}
+
+@keyframes focus-in-expand {
+  0% {
+    letter-spacing: -0.5em;
+    filter: blur(12px);
+    opacity: 0;
+  }
+
+  100% {
+    filter: blur(0px);
+    opacity: 1;
   }
 }

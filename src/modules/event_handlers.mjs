@@ -14,6 +14,12 @@ import {
   getTodoObjectsArrFromStorage,
   saveChangesToLocalStorage
 } from './storage.mjs';
+import { 
+  startPopUpScaleAnimation,
+  startPopUpOpacityAnimation,
+  startClosingScaleAnimation,
+  startClosingOpacityAnimation
+} from "./animations.mjs";
 
 export function headerHandler(e) {
   if (e.target.closest('.menu-icon')) {
@@ -153,6 +159,8 @@ function onProjectAdd(e) {
   domInteractions.insertAddProjectForm();
   domInteractions.insertModalFooter();
 
+  const overlayElem = domInteractions.getOverlayElem();
+  const modalElem = domInteractions.getModalElem();
   const form = domInteractions.getModalForm();
   const nameInput = domInteractions.getNameInput();
 
@@ -161,6 +169,9 @@ function onProjectAdd(e) {
 
   domInteractions.showOverlay();
   domInteractions.focusOnNameInput();
+
+  startPopUpOpacityAnimation(overlayElem);
+  startPopUpScaleAnimation(modalElem);
 }
 
 function onProjectEdit(e) {
@@ -172,6 +183,8 @@ function onProjectEdit(e) {
   domInteractions.insertModalFooter();
   domInteractions.toggleEditStatus(projectElem);
 
+  const overlayElem = domInteractions.getOverlayElem();
+  const modalElem = domInteractions.getModalElem();
   const form = domInteractions.getModalForm();
   const nameInput = domInteractions.getNameInput();
 
@@ -181,6 +194,9 @@ function onProjectEdit(e) {
   domInteractions.showOverlay();
   domInteractions.focusOnNameInput();
   domInteractions.placeCursorAtTheEndOfText();
+
+  startPopUpOpacityAnimation(overlayElem);
+  startPopUpScaleAnimation(modalElem);
 }
 
 function onTodoAdd(e) {
@@ -188,6 +204,8 @@ function onTodoAdd(e) {
   domInteractions.insertAddTodoForm();
   domInteractions.insertModalFooter();
 
+  const overlayElem = domInteractions.getOverlayElem();
+  const modalElem = domInteractions.getModalElem();
   const form = domInteractions.getModalForm();
   const nameInput = domInteractions.getNameInput();
 
@@ -196,6 +214,9 @@ function onTodoAdd(e) {
 
   domInteractions.showOverlay();
   domInteractions.focusOnNameInput();
+
+  startPopUpOpacityAnimation(overlayElem);
+  startPopUpScaleAnimation(modalElem);
 }
 
 function onTodoEdit(e) {
@@ -210,6 +231,8 @@ function onTodoEdit(e) {
   domInteractions.toggleEditStatus(todoElem);
   domInteractions.insertModalFooter();
 
+  const overlayElem = domInteractions.getOverlayElem();
+  const modalElem = domInteractions.getModalElem();
   const form = domInteractions.getModalForm();
   const nameInput = domInteractions.getNameInput();
 
@@ -219,6 +242,9 @@ function onTodoEdit(e) {
   domInteractions.showOverlay();
   domInteractions.focusOnNameInput();
   domInteractions.placeCursorAtTheEndOfText();
+
+  startPopUpOpacityAnimation(overlayElem);
+  startPopUpScaleAnimation(modalElem);
 }
 
 function onTodoSort(e) {
@@ -246,6 +272,9 @@ function onTodoClick(e) {
 
   if (!todoElem) return;
   
+  const overlayElem = domInteractions.getOverlayElem();
+  const modalElem = domInteractions.getModalElem();
+
   const projectElemIndex = domInteractions.getProjectIndexFromTodoElem(todoElem);
   const projectObj = projectStorage.get(projectElemIndex);
   const todoIndex = domInteractions.getElemIndex(todoElem);
@@ -254,6 +283,9 @@ function onTodoClick(e) {
   domInteractions.addClassesToModalElem('details');
   domInteractions.insertTodoDetailsElem(todoObj.destructurizePrivateFields());
   domInteractions.showOverlay();
+
+  startPopUpOpacityAnimation(overlayElem);
+  startPopUpScaleAnimation(modalElem);
 }
 
 function onCheckboxClick(e) {
@@ -281,9 +313,17 @@ function onCheckboxClick(e) {
 }
 
 function onCancel(e) {
-  domInteractions.hideOverlay();
-  domInteractions.resetModal();
-  domInteractions.resetTempFlags();
+  const modalElem = domInteractions.getModalElem();
+  const modalAnimation = startClosingScaleAnimation(modalElem);
+
+  modalAnimation.onfinish = (e) => {
+    domInteractions.hideOverlay();
+    domInteractions.resetModal();
+    domInteractions.resetTempFlags();
+  }
+  
+  const overlay = document.querySelector('.overlay');
+  const overlayAnimation = startClosingOpacityAnimation(overlay);
 }
 
 function onFormSubmit(e) {

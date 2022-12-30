@@ -191,6 +191,7 @@ $modal-padding: min(4vw, 1em);
   textarea,
   select {
     border: $border-normal;
+    transition: border-color 0.2s, background-color 0.2s;
   }
 
   input:hover,

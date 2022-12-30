@@ -648,6 +648,14 @@ export function areTodosSordedByChecked() {
   return dropdownOptionValue === 'checked';
 }
 
+export function getModalElem() {
+  return modalElem;
+}
+
+export function getOverlayElem() {
+  return overlayElem;
+}
+
 function getNumOfUncheckedTodos(todosArr) {
   const uncheckedTodosArr = todosArr.filter((todoObj) => !todoObj.getChecked());
 
