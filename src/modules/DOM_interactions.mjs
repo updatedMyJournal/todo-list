@@ -237,7 +237,7 @@ export function insertProjectElems(...projectObjects) {
     `<li class="media-container clickable-elem project-elem" data-name="${name}" data-index="${index}">
       <div class="media">
         <div class="color" style="background-color: ${color};"></div>
-        <div class="text">${name}</div>
+        <div class="text" title="${name}">${name}</div>
       </div>
       <div class="counter hidden">0</div>
     </li>`);
