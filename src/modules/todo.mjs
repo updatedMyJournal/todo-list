@@ -7,7 +7,7 @@
  * @property {string} name - a todo title
  * @property {string} description - a todo description
  * @property {Date} dueDate - a todo due date
- * @property {Project} projectIndex - an index of the project which contains the todo
+ * @property {number} projectIndex - an index of the project which contains the todo
  * @property {string} priority - a todo priority
  * @property {number} index - a todo index 
  * 

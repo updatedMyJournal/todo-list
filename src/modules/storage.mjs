@@ -8,6 +8,7 @@
 import Project from "./project.mjs";
 import Todo from "./todo.mjs";
 import Factory from "./Factory.mjs";
+import addTestProjectsAndTodos from "./testData.mjs";
 
 /**
  * Storage of all projects. _key_: index, _value_: Project
@@ -20,6 +21,7 @@ export const projectStorage = getProjectStorageFromLocalStorage() ?? new Map();
 
 if (projectStorage.size <= 0) {
   initializeInitialProjectObjects();
+  addTestProjectsAndTodos();
   saveChangesToLocalStorage();
 }
 
