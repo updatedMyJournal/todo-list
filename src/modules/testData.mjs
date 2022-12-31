@@ -18,7 +18,7 @@ export default function addTestProjectsAndTodos() {
 
   const sportProject = new Project({
     name: 'Sport',
-    color: '3350FF',
+    color: '#3350FF',
     index: getComputedIndex(projectStorage),
   });
 
@@ -48,6 +48,7 @@ export default function addTestProjectsAndTodos() {
     }),
     new Todo({
       name: 'Get some sleep',
+      description: '',
       dueDate: new Date(),
       projectIndex: 0,
       index: 3,
@@ -60,6 +61,7 @@ export default function addTestProjectsAndTodos() {
   const workTodos = [
     new Todo({
       name: 'Finish the task',
+      description: '',
       dueDate: new Date(2022, 11, 31),
       projectIndex: workProject.getIndex(),
       index: 0,
@@ -67,6 +69,7 @@ export default function addTestProjectsAndTodos() {
     }),
     new Todo({
       name: 'Do some work',
+      description: '',
       projectIndex: workProject.getIndex(),
       index: 1,
       priority: 'medium'
@@ -78,6 +81,7 @@ export default function addTestProjectsAndTodos() {
   const sportTodos = [
     new Todo({
       name: 'Go jogging',
+      description: '',
       projectIndex: sportProject.getIndex(),
       index: 0,
     })
