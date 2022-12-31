@@ -1,6 +1,6 @@
 $border-normal: 2px solid rgba(0, 0, 0, 0.1);
 $border-hover: 2px solid rgba(0, 0, 0, 0.4);
-$modal-padding: min(4vw, 1em);
+$modal-padding: min(6vw, 1.5rem);
 
 .overlay {
   display: flex;
@@ -29,7 +29,7 @@ $modal-padding: min(4vw, 1em);
   grid-template-rows: auto 1fr auto;
 
   width: clamp(min(80vw, 20rem), 10vw, 20rem);
-  max-height: 90vh;
+  max-height: 75vh;
   border-radius: 8px;
   overflow-y: auto;
   box-shadow: 5px 5px 20px 0px rgb(0, 0, 0, 0.5);
@@ -65,9 +65,14 @@ $modal-padding: min(4vw, 1em);
 
     position: absolute;
     right: $modal-padding;
-    top: 0;
+    top: $modal-padding;
 
     color: red;
+  }
+
+  form.error.add-todo::before,
+  form.error.edit-todo::before {
+    top: 0;
   }
 
   .details-container {
@@ -300,6 +305,8 @@ $modal-padding: min(4vw, 1em);
 
 @media screen and (min-width: 40rem) {
   .modal {
+    max-height: 90vh;
+
     .details-container {
       grid-template-columns: 1fr 30%;
     }

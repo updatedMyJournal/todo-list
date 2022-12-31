@@ -1,5 +1,5 @@
 :root {
-  --main-color: 255, 119, 26;
+  --main-color: 255, 152, 0;
   --second-color: 242, 242, 242;
   --hover-bg-color: 219, 218, 218;
   --border-color: 189, 189, 189;
@@ -13,7 +13,7 @@
   --default-color: 158, 158, 158;
   --low-priority-color: 83, 218, 89;
   --medium-priority-color: 255, 235, 59;
-  --high-priority-color: 255, 40, 24;
+  --high-priority-color: 255, 89, 77;
 
   --margin-size: min(2vw, 1em);
   --gap-size: 0.4em;
@@ -61,6 +61,7 @@ body {
 
 header {
   grid-area: head;
+  text-shadow: 1px 1px 3px black;
 
   h1, .logo-icon {
     animation: focus-in-expand 0.8s cubic-bezier(0.250, 0.460, 0.450, 0.940) both;
